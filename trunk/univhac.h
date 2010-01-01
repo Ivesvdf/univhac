@@ -34,7 +34,7 @@ public:
 		gettimeofday(&last, 0);
 	}
 
-	double poll()
+	double poll() const
 	{
 		timeval now;
 
@@ -65,23 +65,45 @@ private:
 ////////////////////////////////////////////////////////////////////////
 #else
 
+#include "windows.h"
+
 class Univhac
 {
 public:
 	Univhac()
 	{
+        if(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&prevCount)) == 0)
+                throw std::string("Cannot run QueryPerformanceCounter...");
+
+        if(QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec)) == 0)
+                throw std::string("Cannot QueryPerformanceFrequency...");
 
 	}
 
-	double poll()
+	double poll() const
 	{
+        __int64 now;
+
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
+        return double(now-prevCount)/double(countsPerSec);
 
 	}
 
 	double reset()
 	{
+        __int64 now;
+
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
+        double result = double(now-prevCount)/double(countsPerSec);
+        prevCount = now;
+        return result;
 
 	}
+
+private:
+    __int64 prevCount;
+    __int64 countsPerSec;
+
 };
 
 #endif // not unix
