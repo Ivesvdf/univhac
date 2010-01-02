@@ -38,17 +38,17 @@ public:
 	{
 		timeval now;
 
-        gettimeofday(&now, 0);
+		gettimeofday(&now, 0);
 
-        return now.tv_sec-last.tv_sec + (now.tv_usec - last.tv_usec)/1000000.0;
+		return now.tv_sec-last.tv_sec + (now.tv_usec - last.tv_usec)/1000000.0;
 	}
 
 	double reset()
 	{
 		timeval now;
-        gettimeofday(&now, 0);
+		gettimeofday(&now, 0);
 
-        const double rv = now.tv_sec-last.tv_sec + (now.tv_usec - last.tv_usec)/1000000.0;
+		const double rv = now.tv_sec-last.tv_sec + (now.tv_usec - last.tv_usec)/1000000.0;
 
 		last = now;
 
@@ -72,37 +72,37 @@ class Univhac
 public:
 	Univhac()
 	{
-        if(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&prevCount)) == 0)
-                throw std::string("Cannot run QueryPerformanceCounter...");
+		if(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&prevCount)) == 0)
+			throw std::string("Cannot run QueryPerformanceCounter...");
 
-        if(QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec)) == 0)
-                throw std::string("Cannot QueryPerformanceFrequency...");
+		if(QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec)) == 0)
+			throw std::string("Cannot QueryPerformanceFrequency...");
 
 	}
 
 	double poll() const
 	{
-        __int64 now;
+		__int64 now;
 
-        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
-        return double(now-prevCount)/double(countsPerSec);
+		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
+		return double(now-prevCount)/double(countsPerSec);
 
 	}
 
 	double reset()
 	{
-        __int64 now;
+		__int64 now;
 
-        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
-        double result = double(now-prevCount)/double(countsPerSec);
-        prevCount = now;
-        return result;
+		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&now));
+		double result = double(now-prevCount)/double(countsPerSec);
+		prevCount = now;
+		return result;
 
 	}
 
 private:
-    __int64 prevCount;
-    __int64 countsPerSec;
+	__int64 prevCount;
+	__int64 countsPerSec;
 
 };
 
